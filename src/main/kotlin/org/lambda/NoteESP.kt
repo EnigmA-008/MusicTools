@@ -14,6 +14,7 @@ import com.lambda.client.util.math.VectorUtils.toVec3dCenter
 import com.lambda.client.util.text.MessageSendHelper
 import com.lambda.event.listener.listener
 import net.minecraft.init.SoundEvents
+import net.minecraft.network.play.server.SPacketBlockAction
 import net.minecraft.network.play.server.SPacketSoundEffect
 import net.minecraft.util.SoundEvent
 import net.minecraft.util.math.BlockPos
@@ -51,17 +52,16 @@ internal object NoteESP: PluginModule(
         }
 
         listener<PacketEvent.Receive> { event ->
-            if (event.packet is SPacketSoundEffect) {
-                val packet = (event.packet as SPacketSoundEffect)
+            if (event.packet is SPacketBlockAction) {
+                val packet = (event.packet as SPacketBlockAction)
 
-                val instrument = getInstrument(packet.sound) ?: return@listener
-                val pos = BlockPos(packet.x, packet.y, packet.z)
-                val note = Note.values()[(log2(packet.pitch.toDouble()) * 12.0).roundToInt() + 12]
+                val instrument = NoteBlockEvent.Instrument.values()[packet.data1]
+                val note = Note.values()[packet.data2]
 
-                cachedNotes[pos] = note
+                cachedNotes[packet.blockPosition] = note
 
                 if (debug) {
-                    MessageSendHelper.sendChatMessage("Instrument: ${instrument.name} Pos: (${packet.x},${packet.y},${packet.z}) Pitch: ${note.name}")
+                    MessageSendHelper.sendChatMessage("Instrument: ${instrument.name} Pos: (${packet.blockPosition.asString()}) Pitch: ${note.name}")
                 }
             }
         }
@@ -94,22 +94,6 @@ internal object NoteESP: PluginModule(
 
                 GL11.glPopMatrix()
             }
-        }
-    }
-
-    private fun getInstrument(soundEvent: SoundEvent): NoteBlockEvent.Instrument? {
-        return when (soundEvent) {
-            SoundEvents.BLOCK_NOTE_HARP -> NoteBlockEvent.Instrument.PIANO
-            SoundEvents.BLOCK_NOTE_BASEDRUM -> NoteBlockEvent.Instrument.BASSDRUM
-            SoundEvents.BLOCK_NOTE_SNARE -> NoteBlockEvent.Instrument.SNARE
-            SoundEvents.BLOCK_NOTE_HAT -> NoteBlockEvent.Instrument.CLICKS
-            SoundEvents.BLOCK_NOTE_BASS -> NoteBlockEvent.Instrument.BASSGUITAR
-            SoundEvents.BLOCK_NOTE_FLUTE -> NoteBlockEvent.Instrument.FLUTE
-            SoundEvents.BLOCK_NOTE_BELL -> NoteBlockEvent.Instrument.BELL
-            SoundEvents.BLOCK_NOTE_GUITAR -> NoteBlockEvent.Instrument.GUITAR
-            SoundEvents.BLOCK_NOTE_CHIME -> NoteBlockEvent.Instrument.CHIME
-            SoundEvents.BLOCK_NOTE_XYLOPHONE -> NoteBlockEvent.Instrument.XYLOPHONE
-            else -> null
         }
     }
 }
