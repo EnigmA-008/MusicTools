@@ -1,14 +1,13 @@
 {
-  "name": "ExamplePlugin",
+  "name": "MusicTools",
   "version": "1.0",
   "authors": [
-    "me",
-    "you"
+    "EnigmA_008"
   ],
-  "description": "Example implementation of a plugin for Lambda.",
+  "description": "Helps with note block stuff.",
   "url": "",
   "min_api_version": "3.0",
   "required_plugins": [],
-  "main_class": "ExamplePlugin",
+  "main_class": "org.lambda.MusicToolsPlugin",
   "hot_reload": true
 }

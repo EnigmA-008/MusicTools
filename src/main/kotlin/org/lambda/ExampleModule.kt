@@ -14,7 +14,7 @@ internal object ExampleModule: PluginModule(
     name = "ExampleModule",
     category = Category.MISC,
     description = "Example module which mounts entities using packets",
-    pluginMain = ExamplePlugin
+    pluginMain = MusicToolsPlugin
 ) {
     private val maxReach by setting("Max Reach", 4.9f, 0.0f..8.0f, 0.1f, description = "Player's Max Reach")
     private val mountEntity = setting("Mount Entity", false, description = "Mounts the saved entity or falls back to the closest one")

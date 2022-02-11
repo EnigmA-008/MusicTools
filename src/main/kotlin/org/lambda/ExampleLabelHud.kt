@@ -7,7 +7,7 @@ internal object ExampleLabelHud: PluginLabelHud(
     name = "ExampleLabelHud",
     category = Category.MISC,
     description = "Simple hud example",
-    pluginMain = ExamplePlugin
+    pluginMain = MusicToolsPlugin
 ) {
     private val prefix by setting("Prefix", "Hello")
     private val suffix by setting("Suffix", "World")
