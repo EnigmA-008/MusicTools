@@ -2,7 +2,7 @@ package org.lambda.util
 
 import com.lambda.client.util.color.ColorHolder
 
-enum class Note(val color: ColorHolder) {
+enum class Note(val rainbow: ColorHolder) {
     F_SHARP_LOW(ColorHolder(119, 215, 0)),
     G_LOW(ColorHolder(149, 192, 0)),
     G_SHARP_LOW(ColorHolder(178, 165, 0)),
@@ -29,3 +29,31 @@ enum class Note(val color: ColorHolder) {
     F_HIGH(ColorHolder(89, 232, 0)),
     F_SHARP_SUPER_HIGH(ColorHolder(148, 193, 0))
 }
+
+//enum class Note(val default: ColorHolder) {
+//    F_SHARP_LOW(ColorHolder(85, 221, 192)),
+//    G_LOW(ColorHolder(126, 196, 177)),
+//    G_SHARP_LOW(ColorHolder(164, 164, 171)),
+//    A_LOW(ColorHolder(196, 126, 177)),
+//    A_SHARP_LOW(ColorHolder(221, 85, 192)),
+//    B_LOW(ColorHolder(237, 44, 218)),
+//    C_LOW(ColorHolder(243, 6, 6)),
+//    C_SHARP_LOW(ColorHolder(237, 218, 44)),
+//    D_LOW(ColorHolder(221, 192, 85)),
+//    D_SHARP_LOW(ColorHolder(196, 177, 126)),
+//    E_LOW(ColorHolder(164, 171, 164)),
+//    F_LOW(ColorHolder(126, 177, 196)),
+//    F_SHARP_HIGH(ColorHolder(85, 192, 221)),
+//    G_HIGH(ColorHolder(44, 218, 237)),
+//    G_SHARP_HIGH(ColorHolder(6, 6, 243)),
+//    A_HIGH(ColorHolder(218, 44, 237)),
+//    A_SHARP_HIGH(ColorHolder(192, 85, 221)),
+//    B_HIGH(ColorHolder(177, 126, 196)),
+//    C_HIGH(ColorHolder(171, 164, 164)),
+//    C_SHARP_HIGH(ColorHolder(177, 196, 126)),
+//    D_HIGH(ColorHolder(192, 221, 85)),
+//    D_SHARP_HIGH(ColorHolder(218, 237, 44)),
+//    E_HIGH(ColorHolder(6, 243, 6)),
+//    F_HIGH(ColorHolder(44, 237, 218)),
+//    F_SHARP_SUPER_HIGH(ColorHolder(85, 221, 192))
+//}
