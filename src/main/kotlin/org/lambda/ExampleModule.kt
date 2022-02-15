@@ -10,7 +10,7 @@ import net.minecraft.entity.Entity
 import net.minecraft.network.play.client.CPacketUseEntity
 import net.minecraft.util.EnumHand
 
-internal object ExampleModule: PluginModule(
+internal object ExampleModule : PluginModule(
     name = "ExampleModule",
     category = Category.MISC,
     description = "Example module which mounts entities using packets",
@@ -58,7 +58,7 @@ internal object ExampleModule: PluginModule(
                 it != player.ridingEntity
             }.minByOrNull {
                 player.getDistanceSq(it)
-            } ?.let {
+            }?.let {
                 if (maxReach == 0.0f || player.getDistance(it) <= maxReach) {
                     sendChatMessage("$chatName Mounting: ${it.name}@${it.positionVector}")
                     connection.sendPacket(CPacketUseEntity(it, EnumHand.MAIN_HAND))
@@ -66,7 +66,7 @@ internal object ExampleModule: PluginModule(
                     sendChatMessage("$chatName Closest entity too far away: ${it.name}@${it.positionVector.distanceTo(player.positionVector)}")
                 }
             } ?: run {
-                sendChatMessage("$chatName Can't find any Entity in world.")
-            }
+            sendChatMessage("$chatName Can't find any Entity in world.")
+        }
     }
 }

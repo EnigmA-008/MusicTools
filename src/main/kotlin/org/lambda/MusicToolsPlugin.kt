@@ -2,7 +2,7 @@ package org.lambda
 
 import com.lambda.client.plugin.api.Plugin
 
-internal object MusicToolsPlugin: Plugin() {
+internal object MusicToolsPlugin : Plugin() {
 
     override fun onLoad() {
         // Load any modules, commands, or HUD elements here

@@ -3,7 +3,7 @@ package org.lambda
 import com.lambda.client.event.SafeClientEvent
 import com.lambda.client.plugin.api.PluginLabelHud
 
-internal object ExampleLabelHud: PluginLabelHud(
+internal object ExampleLabelHud : PluginLabelHud(
     name = "ExampleLabelHud",
     category = Category.MISC,
     description = "Simple hud example",
