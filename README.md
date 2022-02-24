@@ -4,6 +4,8 @@ This plugin is made to support music machine makers with making music machines i
 Since the data of instrument and pitch of a note block cannot be showed with texture packs (as it is the case in 1.13+) tuning music machines becomes a hard and tedious task. 
 This plugin has been created to make this easier.
 
+Please contact EnigmA_008#1505 on discord if you have any questions of feedback. 
+
 ## NoteESP
 
 NoteESP caches the notes played and shows pitch and instrument as block overlay. 
