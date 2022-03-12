@@ -7,8 +7,6 @@ internal object MusicToolsPlugin : Plugin() {
     override fun onLoad() {
         // Load any modules, commands, or HUD elements here
         modules.add(NoteESP)
-        commands.add(ExampleCommand)
-        hudElements.add(ExampleLabelHud)
     }
 
     override fun onUnload() {

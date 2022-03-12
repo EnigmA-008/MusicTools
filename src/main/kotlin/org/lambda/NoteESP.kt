@@ -5,6 +5,7 @@ import com.lambda.client.event.events.RenderOverlayEvent
 import com.lambda.client.event.events.RenderWorldEvent
 import com.lambda.client.module.Category
 import com.lambda.client.plugin.api.PluginModule
+import com.lambda.client.util.TickTimer
 import com.lambda.client.util.graphics.ESPRenderer
 import com.lambda.client.util.graphics.GlStateUtils
 import com.lambda.client.util.graphics.ProjectionUtils
@@ -12,15 +13,20 @@ import com.lambda.client.util.graphics.font.FontRenderAdapter
 import com.lambda.client.util.math.CoordinateConverter.asString
 import com.lambda.client.util.math.VectorUtils.toVec3dCenter
 import com.lambda.client.util.text.MessageSendHelper
+import com.lambda.client.util.threads.defaultScope
+import com.lambda.client.util.threads.runSafe
 import com.lambda.client.util.threads.safeListener
+import kotlinx.coroutines.launch
 import net.minecraft.block.BlockNote
 import net.minecraft.network.play.server.SPacketBlockAction
 import net.minecraft.util.math.BlockPos
 import net.minecraftforge.event.world.NoteBlockEvent
+import net.minecraftforge.fml.common.gameevent.TickEvent
 import org.lambda.util.Note
 import org.lwjgl.opengl.GL11
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.coroutines.coroutineContext
 
 internal object NoteESP : PluginModule(
     name = "NoteESP",
@@ -29,14 +35,12 @@ internal object NoteESP : PluginModule(
     pluginMain = MusicToolsPlugin
 )
 
-//TODO: remove rendering when block is broken
-
 {
     private val page by setting("Page", Page.SETTINGS)
 
     private val boxRange by setting("Render Range for box", 32, 0..265, 4, { page == Page.SETTINGS }, description = "Range for Rendering of the box")
     private val textRange by setting("Render Range for text", 32, 0..256, 4, { page == Page.SETTINGS }, description = "Range for Rendering of the text")
-    private val tuning by setting("Tuning", false, { page == Page.SETTINGS }, description = "Selectively renders only relevant layers")
+    private val tuning by setting("Tuning Mode", false, { page == Page.SETTINGS }, description = "Selectively renders only relevant layers")
     private val tuningRange by setting("Tuning Range", 2, 2..6, 1, { tuning && page == Page.SETTINGS }, description = "Rendering for Y Level below feet")
     private val reset = setting("Reset", false, { page == Page.SETTINGS }, description = "Resets cached notes")
     private val debug by setting("Debug", false, { page == Page.SETTINGS }, description = "Debug messages in chat")
@@ -51,8 +55,8 @@ internal object NoteESP : PluginModule(
 
     private val cachedMusicData = ConcurrentHashMap<BlockPos, MusicData>()
     private val renderer = ESPRenderer()
-//    private val updateTimer = TickTimer()
-//    private const val updateDelay = 1000
+    private val updateTimer = TickTimer()
+    private const val updateDelay = 1000L
 
     private enum class Page {
         SETTINGS, RENDER
@@ -85,6 +89,17 @@ internal object NoteESP : PluginModule(
                     if (debug) {
                         MessageSendHelper.sendChatMessage("Instrument: ${instrument.name} Pos: (${packet.blockPosition.asString()}) Pitch: ${note.name}")
                     }
+                }
+            }
+        }
+
+        safeListener<TickEvent.ClientTickEvent> { event ->
+            if (event.phase != TickEvent.Phase.START || !updateTimer.tick(updateDelay)) return@safeListener
+            defaultScope.launch {
+                runSafe {
+                    cachedMusicData
+                        .filter { world.getBlockState(it.key).block !is BlockNote }
+                        .forEach { cachedMusicData.remove(it.key) }
                 }
             }
         }
