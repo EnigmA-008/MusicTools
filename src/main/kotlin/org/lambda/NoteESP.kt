@@ -121,40 +121,40 @@ internal object NoteESP : PluginModule(
         safeListener<RenderOverlayEvent> {
             GlStateUtils.rescaleActual()
 
-            cachedMusicData.forEach { it ->
+            cachedMusicData.forEach { musicDataEntry ->
                 if (renderMode == RenderMode.RANGE) {
-                    if (player.getPositionEyes(1f).distanceTo(it.key.toVec3dCenter()) < textRange) {
+                    if (player.getPositionEyes(1f).distanceTo(musicDataEntry.key.toVec3dCenter()) < textRange) {
                         GL11.glPushMatrix()
 
-                        val screenPos = ProjectionUtils.toScreenPos(it.key.toVec3dCenter())
+                        val screenPos = ProjectionUtils.toScreenPos(musicDataEntry.key.toVec3dCenter())
 
                         GL11.glTranslated(screenPos.x, screenPos.y, 0.0)
                         GL11.glScalef(textScale * 2f, textScale * 2f, 1f)
 
-                        val centerValue = FontRenderAdapter.getStringWidth(it.value.note.ordinal.toString()) / -2f
-                        val centerKey = FontRenderAdapter.getStringWidth(it.value.instrument.name) / -2f
+                        val centerValue = FontRenderAdapter.getStringWidth(musicDataEntry.value.note.ordinal.toString()) / -2f
+                        val centerKey = FontRenderAdapter.getStringWidth(musicDataEntry.value.instrument.name) / -2f
 
-                        FontRenderAdapter.drawString(it.value.note.ordinal.toString(), centerValue, 0f, color = it.value.color)
-                        FontRenderAdapter.drawString(it.value.instrument.name.lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }, centerKey, FontRenderAdapter.getFontHeight(), color = it.value.color)
+                        FontRenderAdapter.drawString(musicDataEntry.value.note.ordinal.toString(), centerValue, 0f, color = musicDataEntry.value.color)
+                        FontRenderAdapter.drawString(musicDataEntry.value.instrument.name.lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }, centerKey, FontRenderAdapter.getFontHeight(), color = musicDataEntry.value.color)
 
                         GL11.glPopMatrix()
                     }
                 }
                 if (renderMode == RenderMode.TUNINGMODE) {
-                    if ((it.key.y > player.getPositionEyes(1f).y.toInt() - tuningRange - 2) &&
-                        (player.getPositionEyes(1f).distanceTo(it.key.toVec3dCenter()) < boxRange)) {
+                    if ((musicDataEntry.key.y > player.getPositionEyes(1f).y.toInt() - tuningRange - 2) &&
+                        (player.getPositionEyes(1f).distanceTo(musicDataEntry.key.toVec3dCenter()) < boxRange)) {
                         GL11.glPushMatrix()
 
-                        val screenPos = ProjectionUtils.toScreenPos(it.key.toVec3dCenter())
+                        val screenPos = ProjectionUtils.toScreenPos(musicDataEntry.key.toVec3dCenter())
 
                         GL11.glTranslated(screenPos.x, screenPos.y, 0.0)
                         GL11.glScalef(textScale * 2f, textScale * 2f, 1f)
 
-                        val centerValue = FontRenderAdapter.getStringWidth(it.value.note.ordinal.toString()) / -2f
-                        val centerKey = FontRenderAdapter.getStringWidth(it.value.instrument.name) / -2f
+                        val centerValue = FontRenderAdapter.getStringWidth(musicDataEntry.value.note.ordinal.toString()) / -2f
+                        val centerKey = FontRenderAdapter.getStringWidth(musicDataEntry.value.instrument.name) / -2f
 
-                        FontRenderAdapter.drawString(it.value.note.ordinal.toString(), centerValue, 0f, color = it.value.color)
-                        FontRenderAdapter.drawString(it.value.instrument.name.lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }, centerKey, FontRenderAdapter.getFontHeight(), color = it.value.color)
+                        FontRenderAdapter.drawString(musicDataEntry.value.note.ordinal.toString(), centerValue, 0f, color = musicDataEntry.value.color)
+                        FontRenderAdapter.drawString(musicDataEntry.value.instrument.name.lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }, centerKey, FontRenderAdapter.getFontHeight(), color = musicDataEntry.value.color)
 
                         GL11.glPopMatrix()
                     }
