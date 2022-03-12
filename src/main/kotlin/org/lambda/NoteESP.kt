@@ -4,9 +4,7 @@ import com.lambda.client.event.events.PacketEvent
 import com.lambda.client.event.events.RenderOverlayEvent
 import com.lambda.client.event.events.RenderWorldEvent
 import com.lambda.client.module.Category
-import com.lambda.client.module.modules.render.StorageESP
 import com.lambda.client.plugin.api.PluginModule
-import com.lambda.client.util.TickTimer
 import com.lambda.client.util.graphics.ESPRenderer
 import com.lambda.client.util.graphics.GlStateUtils
 import com.lambda.client.util.graphics.ProjectionUtils
@@ -36,10 +34,10 @@ internal object NoteESP : PluginModule(
 {
     private val page by setting("Page", Page.SETTINGS)
 
-    private val boxRange by setting("Render Range for box", 32, 0..265, 4, { (renderMode == RenderMode.RANGE || renderMode == RenderMode.TUNINGMODE) && page == Page.SETTINGS }, description = "Range for Rendering of the box")
-    private val textRange by setting("Render Range for text ", 32, 0..256, 4, { (renderMode == RenderMode.RANGE || renderMode == RenderMode.TUNINGMODE) && page == Page.SETTINGS }, description = "Range for Rendering of the text")
-    private val renderMode by setting("Rendering", RenderMode.RANGE, { page == Page.SETTINGS }, description = "Changes Render Mode")
-    private val tuningRange by setting("Tuning Range", 2, 2..6, 1, { renderMode == RenderMode.TUNINGMODE && page == Page.SETTINGS }, description = "Rendering for Y Level below feet")
+    private val boxRange by setting("Render Range for box", 32, 0..265, 4, { page == Page.SETTINGS }, description = "Range for Rendering of the box")
+    private val textRange by setting("Render Range for text", 32, 0..256, 4, { page == Page.SETTINGS }, description = "Range for Rendering of the text")
+    private val tuning by setting("Tuning", false, { page == Page.SETTINGS }, description = "Selectively renders only relevant layers")
+    private val tuningRange by setting("Tuning Range", 2, 2..6, 1, { tuning && page == Page.SETTINGS }, description = "Rendering for Y Level below feet")
     private val reset = setting("Reset", false, { page == Page.SETTINGS }, description = "Resets cached notes")
     private val debug by setting("Debug", false, { page == Page.SETTINGS }, description = "Debug messages in chat")
 
@@ -62,10 +60,6 @@ internal object NoteESP : PluginModule(
 
     enum class ColorScheme {
         DEFAULT, RAINBOW
-    }
-
-    enum class RenderMode {
-        RANGE, TUNINGMODE
     }
 
     // reset button
@@ -101,19 +95,14 @@ internal object NoteESP : PluginModule(
             renderer.aOutline = if (outline) alphaOutline else 0
             renderer.thickness = thickness
 
-            cachedMusicData.forEach {
-                if (renderMode == RenderMode.RANGE) {
-                    if (player.getPositionEyes(1f).distanceTo(it.key.toVec3dCenter()) < boxRange) {
-                        renderer.add(it.key, it.value.color)
-                    }
-                }
-                if (renderMode == RenderMode.TUNINGMODE) {
-                    if ((it.key.y > player.getPositionEyes(1f).y.toInt() - tuningRange - 2) &&
-                        (player.getPositionEyes(1f).distanceTo(it.key.toVec3dCenter()) < boxRange)) {
-                        renderer.add(it.key, it.value.color)
-                    }
-                }
+            var renderData = cachedMusicData.filter { player.positionVector.distanceTo(it.key.toVec3dCenter()) < boxRange }
+
+            if (tuning) {
+                renderData = renderData.filter { it.key.y > player.posY - tuningRange }
             }
+
+            renderData.forEach { renderer.add(it.key, it.value.color) }
+
             renderer.render(true)
         }
 
@@ -121,53 +110,29 @@ internal object NoteESP : PluginModule(
         safeListener<RenderOverlayEvent> {
             GlStateUtils.rescaleActual()
 
-            cachedMusicData.forEach { musicDataEntry ->
-                if (renderMode == RenderMode.RANGE) {
-                    if (player.getPositionEyes(1f).distanceTo(musicDataEntry.key.toVec3dCenter()) < textRange) {
-                        GL11.glPushMatrix()
+            var renderData = cachedMusicData.filter { player.positionVector.distanceTo(it.key.toVec3dCenter()) < textRange }
 
-                        val screenPos = ProjectionUtils.toScreenPos(musicDataEntry.key.toVec3dCenter())
+            if (tuning) {
+                renderData = renderData.filter { it.key.y > player.posY - tuningRange }
+            }
 
-                        GL11.glTranslated(screenPos.x, screenPos.y, 0.0)
-                        GL11.glScalef(textScale * 2f, textScale * 2f, 1f)
+            renderData.forEach { musicDataEntry ->
+                GL11.glPushMatrix()
 
-                        val centerValue = FontRenderAdapter.getStringWidth(musicDataEntry.value.note.ordinal.toString()) / -2f
-                        val centerKey = FontRenderAdapter.getStringWidth(musicDataEntry.value.instrument.name) / -2f
+                val screenPos = ProjectionUtils.toScreenPos(musicDataEntry.key.toVec3dCenter())
 
-                        FontRenderAdapter.drawString(musicDataEntry.value.note.ordinal.toString(), centerValue, 0f, color = musicDataEntry.value.color)
-                        FontRenderAdapter.drawString(musicDataEntry.value.instrument.name.lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }, centerKey, FontRenderAdapter.getFontHeight(), color = musicDataEntry.value.color)
+                GL11.glTranslated(screenPos.x, screenPos.y, 0.0)
+                GL11.glScalef(textScale * 2f, textScale * 2f, 1f)
 
-                        GL11.glPopMatrix()
-                    }
-                }
-                if (renderMode == RenderMode.TUNINGMODE) {
-                    if ((musicDataEntry.key.y > player.getPositionEyes(1f).y.toInt() - tuningRange - 2) &&
-                        (player.getPositionEyes(1f).distanceTo(musicDataEntry.key.toVec3dCenter()) < boxRange)) {
-                        GL11.glPushMatrix()
+                val centerValue = FontRenderAdapter.getStringWidth(musicDataEntry.value.note.ordinal.toString()) / -2f
+                val centerKey = FontRenderAdapter.getStringWidth(musicDataEntry.value.instrument.name) / -2f
 
-                        val screenPos = ProjectionUtils.toScreenPos(musicDataEntry.key.toVec3dCenter())
+                FontRenderAdapter.drawString(musicDataEntry.value.note.ordinal.toString(), centerValue, 0f, color = musicDataEntry.value.color)
+                FontRenderAdapter.drawString(musicDataEntry.value.instrument.name.lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }, centerKey, FontRenderAdapter.getFontHeight(), color = musicDataEntry.value.color)
 
-                        GL11.glTranslated(screenPos.x, screenPos.y, 0.0)
-                        GL11.glScalef(textScale * 2f, textScale * 2f, 1f)
-
-                        val centerValue = FontRenderAdapter.getStringWidth(musicDataEntry.value.note.ordinal.toString()) / -2f
-                        val centerKey = FontRenderAdapter.getStringWidth(musicDataEntry.value.instrument.name) / -2f
-
-                        FontRenderAdapter.drawString(musicDataEntry.value.note.ordinal.toString(), centerValue, 0f, color = musicDataEntry.value.color)
-                        FontRenderAdapter.drawString(musicDataEntry.value.instrument.name.lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }, centerKey, FontRenderAdapter.getFontHeight(), color = musicDataEntry.value.color)
-
-                        GL11.glPopMatrix()
-                    }
-                }
+                GL11.glPopMatrix()
             }
         }
-//        safeListener<RenderWorldEvent> {
-//            renderer.render(false)
-//
-//            if (updateTimer.tick(updateDelay.toLong())) {
-//                updateRenderer()
-//            }
-//        }
     }
 
     private class MusicData(val note: Note, val instrument: NoteBlockEvent.Instrument) {
