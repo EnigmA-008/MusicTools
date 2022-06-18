@@ -7,6 +7,7 @@ internal object MusicToolsPlugin : Plugin() {
     override fun onLoad() {
         // Load any modules, commands, or HUD elements here
         modules.add(NoteESP)
+        modules.add(NoteBlockTransfer)
     }
 
     override fun onUnload() {

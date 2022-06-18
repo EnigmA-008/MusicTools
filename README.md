@@ -11,6 +11,10 @@ The `Tuning Mode` helps to just show the note blocks on the same y level as the 
 The `Tuning Range` indicates the number of blocks on the y-axis under the feet of the player.
 If `Debug` is activated the output of the note blocks is shown in chat.
 
+## NoteBlockTransfer
+Automates the transfer of note block songs and music machines to a server.  
+Author: minecraft_simon
+
 ## Upcoming features
 – import of nbs files from Note Block Studio
 – AutoTuner for note blocks in music machines
