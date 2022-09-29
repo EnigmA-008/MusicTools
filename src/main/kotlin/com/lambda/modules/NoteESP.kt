@@ -53,7 +53,7 @@ internal object NoteESP : PluginModule(
     private val colorScheme by setting("Color Scheme", ColorScheme.DEFAULT, { page == Page.RENDER }, description = "Changes Color Scheme")
 
     private val cachedMusicData = ConcurrentHashMap<BlockPos, MusicData>()
-    private val renderer = ESPRenderer()
+    private val renderer by lazy { ESPRenderer() }
     private val updateTimer = TickTimer()
     private const val updateDelay = 1000L
 
