@@ -1,13 +1,12 @@
 {
   "name": "MusicTools",
-  "version": "1.0",
+  "version": "1.1",
   "authors": [
     "EnigmA_008"
   ],
   "description": "Helps with note block stuff.",
-  "url": "",
-  "min_api_version": "3.0",
+  "url": "https://github.com/EnigmA-008/MusicTools",
+  "min_api_version": "3.2",
   "required_plugins": [],
-  "main_class": "org.lambda.MusicToolsPlugin",
-  "hot_reload": true
+  "main_class": "com.lambda.MusicToolsPlugin"
 }

@@ -1,5 +1,6 @@
-package org.lambda
+package com.lambda.modules
 
+import com.lambda.MusicToolsPlugin
 import com.lambda.client.event.events.PacketEvent
 import com.lambda.client.event.events.RenderOverlayEvent
 import com.lambda.client.event.events.RenderWorldEvent
@@ -22,11 +23,9 @@ import net.minecraft.network.play.server.SPacketBlockAction
 import net.minecraft.util.math.BlockPos
 import net.minecraftforge.event.world.NoteBlockEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
-import org.lambda.util.Note
+import com.lambda.util.Note
 import org.lwjgl.opengl.GL11
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.coroutines.coroutineContext
 
 internal object NoteESP : PluginModule(
     name = "NoteESP",
@@ -47,9 +46,9 @@ internal object NoteESP : PluginModule(
 
     private val filled by setting("Filled", true, { page == Page.RENDER }, description = "Renders surfaces")
     private val outline by setting("Outline", true, { page == Page.RENDER }, description = "Renders outline")
-    private val alphaFilled by setting("Alpha Filled", 26, 0..255, 1, { filled && page == Page.RENDER}, description = "Alpha for surfaces")
-    private val alphaOutline by setting("Alpha Outline", 26, 0..255, 1, { outline && page == Page.RENDER}, description = "Alpha for outline")
-    private val thickness by setting("Outline Thickness", 2f, .25f..4f, .25f, { outline && page == Page.RENDER}, description = "Changes thickness of the outline")
+    private val alphaFilled by setting("Alpha Filled", 26, 0..255, 1, { filled && page == Page.RENDER }, description = "Alpha for surfaces")
+    private val alphaOutline by setting("Alpha Outline", 26, 0..255, 1, { outline && page == Page.RENDER }, description = "Alpha for outline")
+    private val thickness by setting("Outline Thickness", 2f, .25f..4f, .25f, { outline && page == Page.RENDER }, description = "Changes thickness of the outline")
     private val textScale by setting("Text Scale", 1f, .0f..4f, .25f, { page == Page.RENDER }, description = "Changes Text Scale")
     private val colorScheme by setting("Color Scheme", ColorScheme.DEFAULT, { page == Page.RENDER }, description = "Changes Color Scheme")
 
