@@ -1,4 +1,4 @@
-package org.lambda.util
+package com.lambda.modules.util
 
 import net.minecraftforge.event.world.NoteBlockEvent
 

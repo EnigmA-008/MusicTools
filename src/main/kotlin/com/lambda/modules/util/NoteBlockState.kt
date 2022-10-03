@@ -1,4 +1,4 @@
-package org.lambda.util
+package com.lambda.modules.util
 
 import com.lambda.client.util.color.ColorHolder
 

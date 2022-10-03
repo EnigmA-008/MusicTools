@@ -1,5 +1,6 @@
-package org.lambda
+package com.lambda.modules
 
+import com.lambda.MusicToolsPlugin
 import com.lambda.client.event.SafeClientEvent
 import com.lambda.client.event.events.PacketEvent
 import com.lambda.client.event.events.RenderOverlayEvent
@@ -18,6 +19,8 @@ import com.lambda.client.util.math.VectorUtils.toVec3dCenter
 import com.lambda.client.util.text.MessageSendHelper
 import com.lambda.client.util.threads.safeListener
 import com.lambda.client.util.world.getMiningSide
+import com.lambda.modules.util.NoteBlockInformation
+import com.lambda.modules.util.NoteBlockState
 import net.minecraft.block.BlockNote
 import net.minecraft.block.state.IBlockState
 import net.minecraft.init.Blocks
@@ -35,8 +38,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.event.world.NoteBlockEvent
 import net.minecraftforge.event.world.WorldEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
-import org.lambda.util.NoteBlockInformation
-import org.lambda.util.NoteBlockState
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.HashMap
