@@ -1,6 +1,6 @@
 {
   "name": "MusicTools",
-  "version": "1.2",
+  "version": "${version}",
   "authors": [
     "EnigmA_008", "minecraft_simon"
   ],
