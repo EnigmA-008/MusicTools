@@ -8,12 +8,10 @@ import com.lambda.client.event.events.RenderWorldEvent
 import com.lambda.client.event.listener.asyncListener
 import com.lambda.client.manager.managers.PlayerPacketManager.sendPlayerPacket
 import com.lambda.client.module.Category
-import com.lambda.client.module.Module
 import com.lambda.client.plugin.api.PluginModule
 import com.lambda.client.util.CircularArray
 import com.lambda.client.util.color.ColorHolder
 import com.lambda.client.util.graphics.ESPRenderer
-import com.lambda.client.util.graphics.RenderUtils2D
 import com.lambda.client.util.math.RotationUtils
 import com.lambda.client.util.math.VectorUtils.toVec3dCenter
 import com.lambda.client.util.text.MessageSendHelper
@@ -40,7 +38,6 @@ import net.minecraftforge.event.world.WorldEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.HashMap
 import kotlin.concurrent.schedule
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
@@ -85,8 +82,8 @@ object NoteBlockTransfer : PluginModule(
     private var world: World? = null
     private var serverIP = ""
 
-    private val lightESP = ESPRenderer() // used for recorded or matching note blocks
-    private val boldESP = ESPRenderer() // used for incorrect note blocks, is more visible than lightESP
+    private val lightESP by lazy { ESPRenderer() } // used for recorded or matching note blocks
+    private val boldESP by lazy { ESPRenderer() }// used for incorrect note blocks, is more visible than lightESP
     private val alignmentEspColor = ColorHolder(0, 234, 255)
 
     // fields relating to auto-tuner timing
@@ -309,6 +306,7 @@ object NoteBlockTransfer : PluginModule(
      * Prints elapsed milliseconds in chat
      * only used during development for performance testing
      */
+    @Suppress("UNUSED")
     private fun stopTimer() {
         val timeNow = System.currentTimeMillis()
         val diff = timeNow - time
